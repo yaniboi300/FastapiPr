@@ -13,5 +13,4 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     cors_allowed_origins: list[str] = Field(default_factory=list)
 
-
 settings = Settings()
