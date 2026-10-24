@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.categoy import CategoryORM
+from app.models.category import CategoryORM
 
 
 
