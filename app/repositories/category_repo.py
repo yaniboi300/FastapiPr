@@ -1,29 +1,23 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models.category import CategoryORM
-
+from app.models.category_model import CategoryORM
 
 
 class CategoryRepository:
-    def __init__(self,db:Session)->None:
+    def __init__(self, db: Session) -> None:
         self.db = db
 
+    def get_all(self) -> list[CategoryORM]:
+        return list(self.db.execute(select(CategoryORM)).scalars().all())
 
-    def get_all(self)->list[CategoryORM]:
-        return self.db.execute(select(CategoryORM)).scalars().all()
-
-    def get_by_id(self, category_id:str)->CategoryORM:
+    def get_by_id(self, category_id: str) -> CategoryORM | None:
         return self.db.get(CategoryORM, category_id)
 
-
-    def create(self, name:str)->CategoryORM:
-        new_category = CategoryORM(
-            name=name
-        )
+    def create(self, name: str) -> CategoryORM:
+        new_category = CategoryORM(name=name)
         self.db.add(new_category)
         return new_category
 
-
-    def delete(self,CategoryOrm):
+    def delete(self, CategoryOrm):
         self.db.delete(CategoryOrm)

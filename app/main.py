@@ -1,11 +1,13 @@
 import logging
 from time import perf_counter
 from typing import Callable
+
 from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.api.routers.categories import router as category_router
+from app.api.routers.tasks import router as task_router
 from app.core.config import settings
-from app.api.routers.task import router as task_router
-from app.api.routers.category import router as category_router
 from app.core.logging import configure_logging
 
 configure_logging()
@@ -17,11 +19,12 @@ app.add_middleware(
     allow_origins=settings.cors_allowed_origins,
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_credentials=True
+    allow_credentials=True,
 )
 
+
 @app.middleware("http")
-async def log_requests(request:Request, call_next:Callable)->Response:
+async def log_requests(request: Request, call_next: Callable) -> Response:
     started_at = perf_counter()
     try:
         response: Response = await call_next(request)
@@ -45,19 +48,19 @@ async def log_requests(request:Request, call_next:Callable)->Response:
     )
     return response
 
+
 REQUEST_COUNT = 0
 
+
 @app.middleware("http")
-async def count_requests(request:Request, call_next:Callable)->Response:
+async def count_requests(request: Request, call_next: Callable) -> Response:
     global REQUEST_COUNT
     REQUEST_COUNT += 1
-    response: Response = await call_next(request) #вызов эндпоинта
+    response: Response = await call_next(request)  # вызов эндпоинта
 
     response.headers["X-Total-Requests"] = str(REQUEST_COUNT)
 
     return response
-
-
 
 
 app.include_router(router=task_router)

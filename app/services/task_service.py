@@ -1,31 +1,30 @@
 from sqlalchemy.orm import Session
 
 from app.repositories.task_repo import TaskRepository
-from app.schemas.task import TaskSchema, TaskCreateSchema, TaskUpdateSchema
+from app.schemas.task import TaskCreateSchema, TaskSchema, TaskUpdateSchema
+
 
 class TaskNotFound(Exception):
-    """"Задача не найдена"""
+    """ "Задача не найдена"""
+
     pass
 
 
-
 class TaskService:
-
-    def __init__(self,db:Session)->None:
+    def __init__(self, db: Session) -> None:
         self.db = db
         self.task_repository = TaskRepository(db=db)
 
-    def list_tasks(self)->list[TaskSchema]:
+    def list_tasks(self) -> list[TaskSchema]:
         tasks_orm = self.task_repository.get_all()
         return [TaskSchema.model_validate(task) for task in tasks_orm]
 
-
-    def create_task(self, task: TaskCreateSchema)->TaskSchema:
+    def create_task(self, task: TaskCreateSchema) -> TaskSchema:
         task_orm = self.task_repository.create(task.title)
         self.db.commit()
         return TaskSchema.model_validate(task_orm)
 
-    def update_task(self, task_id:str, task: TaskUpdateSchema)->TaskSchema:
+    def update_task(self, task_id: str, task: TaskUpdateSchema) -> TaskSchema:
         task_for_update = self.task_repository.get_by_id(task_id)
         if not task_for_update:
             raise TaskNotFound(f"Задача {task_id} не найдена")

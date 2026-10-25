@@ -2,8 +2,8 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-from app.models.task import TaskORM
-from app.models.category import CategoryORM
+from app.models.task_model import TaskORM
+from app.models.category_model import CategoryORM
 from alembic import context
 
 from app.core.config import settings
